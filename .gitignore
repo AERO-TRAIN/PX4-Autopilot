@@ -16,6 +16,20 @@
 Testing/
 Packages/*
 build/*
+Cache/*
+CachedConfigurations/*
+CachedData/*
+CachedExtensions/*
+Code Cache/*
+Crashpad/*
+databases/*
+Dictionaries/*
+GPUCache/*
+Local Storage/*
+Session Storage/*
+Service Worker/*
+User/*
+WebStorage/*
 build_*/
 cscope.out
 cscope.in.out
@@ -26,6 +40,14 @@ user.sublime*
 /Documentation/html/
 /Documentation/doxygen*objdb*tmp
 .tags
+*.lock
+Cookies
+Cookies-journal
+languagepacks.json
+machineid
+Network Persistent State
+Preferences
+TransportSecurity
 tags
 .tags_sorted_by_file
 .pydevproject

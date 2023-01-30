@@ -142,6 +142,7 @@ set(debuggers
 )
 
 set(models
+	aerotrain
 	none
 	believer
 	boat
@@ -180,6 +181,7 @@ set(models
 )
 
 set(worlds
+	aerotrain
 	none
 	baylands
 	empty
