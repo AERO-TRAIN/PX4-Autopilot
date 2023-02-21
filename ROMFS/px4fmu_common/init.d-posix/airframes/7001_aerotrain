@@ -9,14 +9,14 @@
 
 param set-default MAV_TYPE 13
 
-param set-default MC_PITCHRATE_P 0.0600
-param set-default MC_PITCHRATE_I 0.0300
-param set-default MC_PITCHRATE_D 0.0005
-param set-default MC_PITCH_P 10.0
-param set-default MC_ROLLRATE_P 0.0600
-param set-default MC_ROLLRATE_I 0.0300
-param set-default MC_ROLLRATE_D 0.0005
-param set-default MC_ROLL_P 10.0
+param set-default MC_PITCHRATE_P 0.056185267865657806
+param set-default MC_PITCHRATE_I 0.077220581471920013
+param set-default MC_PITCHRATE_D 0.001399999950081110
+param set-default MC_PITCH_P 6.5
+param set-default MC_ROLLRATE_P 0.043796814978122711
+param set-default MC_ROLLRATE_I 0.060296110808849335
+param set-default MC_ROLLRATE_D 0.001200000056996942
+param set-default MC_ROLL_P 6.5
 param set-default MPC_XY_VEL_I_ACC 4
 param set-default MPC_XY_VEL_P_ACC 3
 
