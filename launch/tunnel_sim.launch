@@ -118,9 +118,6 @@
     
     <node type="rviz" name="rviz" pkg="rviz" />
 
-    <!-- start realsense cam-->
-    <include file="/root/catkin_ws/src/realsense2_description/launch/view_t265_model_copy.launch">
-    </include>
     
 </launch>
 
