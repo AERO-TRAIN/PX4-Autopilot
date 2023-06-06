@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!-- these are the arguments you can pass this launch file, for example paused:=true -->
+    <arg name="paused" default="false"/>
+    <arg name="gui" default="true"/>
+    <arg name="debug" default="false"/>
+    <arg name="verbose" default="true"/>
+    <arg name="model" default="/root/PX4-Autopilot/Tools/sitl_gazebo/models/tunnels/inspection_tunnel.urdf.gazebo"/> 
+    <arg name="sdf" default="/root/PX4-Autopilot/Tools/sitl_gazebo/models/aerotrain/aerotrain.sdf"/>
+    <arg name="world" default="/root/PX4-Autopilot/Tools/sitl_gazebo/worlds/well_lit.world"/>
+    <param name="robot_description" textfile="/root/PX4-Autopilot/Tools/sitl_gazebo/models/aerotrain/aerotrain.urdf" />
+
+    <arg name="vehicle" default="aerotrain"/>
+    <arg name="fcu_url" default="udp://:14540@localhost:14557"/>
+    <arg name="interactive" default="true"/>
+    <arg name="respawn_mavros" default="false"/>
+
+    <arg name="enable_mavros" default="true"/>
+    <arg name="spawn_tunnel" default="true"/>
+    <arg name="spawn_cracks" default="true"/>
+
+    <!-- start gazebo server, the drone position is to center somewhere in the map because the target position are hardcoded -->
+    <include file="$(find px4)/launch/posix_sitl.launch">
+        <arg name="x" default="7.0"/>
+        <arg name="y" default="-5.0"/>
+        <arg name="z" default="1.0"/>
+        <arg name="Y" default="0.0"/>
+        <arg name="world" value="$(arg world)" />
+        <arg name="debug" value="$(arg debug)" />
+        <arg name="paused" value="$(arg paused)" />
+        <arg name="gui" value="$(arg gui)" />
+        <arg name="verbose" value="$(arg verbose)" />
+        <arg name="sdf" value="$(arg sdf)" />
+        <arg name="vehicle" value="$(arg vehicle)" />
+        <arg name="interactive" value="$(arg interactive)" />
+    </include>
+  
+  <!-- MAVROS -->
+    <group if="$(arg enable_mavros)">
+        <include file="$(find mavros)/launch/px4.launch">
+            <!-- GCS link is provided by SITL -->
+            <arg name="gcs_url" value=""/>
+            <arg name="fcu_url" value="$(arg fcu_url)"/>
+            <arg name="respawn_mavros" value="$(arg respawn_mavros)"/>
+        </include>
+    </group>
+
+
+    <!-- spawn the tunnel  -->
+    <group if="$(arg spawn_tunnel)">
+
+        <arg name="name" default="inspection_world"/>
+        <arg name="tf_prefix" default="$(optenv ROS_NAMESPACE)"/>
+        <!-- <arg name="x" default="-10.0"/>
+        <arg name="y" default="-25.0"/>
+        <arg name="z" default="-0.01"/> -->
+        <arg name="x" default="0.0"/>
+        <arg name="y" default="0.0"/>
+        <arg name="z" default="-0.01"/>
+        <arg name="enable_logging" default="false"/>
+        <arg name="enable_ground_truth" default="true"/>
+        <arg name="log_file" default="mmuav_log"/>
+        <arg name="exclude_floor_link_from_collision_check" default="ground_plane::link"/>
+
+        <!-- send the robot XML to param server -->
+        <param name="/$(arg name)/robot_description" command="
+            $(find xacro)/xacro --inorder '$(arg model)'
+            enable_logging:=$(arg enable_logging)
+            enable_ground_truth:=$(arg enable_ground_truth)
+            exclude_floor_link_from_collision_check:=$(arg exclude_floor_link_from_collision_check)
+            log_file:=$(arg log_file)
+            name:=$(arg name)"
+        />
+            
+        <param name="tf_prefix" type="string" value="$(arg tf_prefix)" />
+
+        <!-- push robot_description to factory and spawn robot in gazebo -->
+        <node name="spawn_robot" pkg="gazebo_ros" type="spawn_model"
+        args="-param /$(arg name)/robot_description
+                -sdf
+                -x $(arg x)
+                -y $(arg y)
+                -z $(arg z)
+                -R 1.57
+                -P 0
+                -Y 0
+                -model $(arg name)"
+        respawn="false" output="screen" >
+        </node>
+    </group>
+
+    <!-- spawn the cracks  https://github.com/larics/icuas23_competition/blob/main/startup/challenge/spawn_tiles.py-->
+    <!-- those are possible hardcoded positions for the target taken from the code above -->
+    <!-- tile_poses = [(7.56, 8.32, 9.1, 0.7854), (7.57, 14.60, 5.5, -0.7854), (3.00, 43.36, 11.1, -1.5707), (9.3, 43.36, 4.8, -1.5707), (10.36, 45.3, 3.8, 0), (10.36, 46.2, 12.1, 0), (10.36, 44.5, 8.35, 0), (16.2, 44.275, 7.3, -1.5707), (5.92, 12, 4.35, 3.1415), (6.34, 11, 4.35, 0)] -->
+    <group if="$(arg spawn_cracks)">
+        <include file="$(find px4)/launch/spawn_target.launch">
+            <arg name="name" default="target_1"/>
+            <arg name="x" default="9.48"/>
+            <arg name="y" default="-3.0"/>
+            <arg name="z" default="4.5"/>
+            <arg name="yaw" default="3.57"/>
+        </include>
+        <include file="$(find px4)/launch/spawn_target.launch">
+            <arg name="name" default="target_2"/>
+            <arg name="x" default="1.5"/>
+            <arg name="y" default="-6.0"/>
+            <arg name="z" default="4.0"/>
+            <arg name="yaw" default="0.43"/>
+        </include>
+    </group>
+
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher"/>
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+    <node pkg="tf" type="static_transform_publisher" name="world_map_broadcaster" args="0 0 0 0 0 0 1  world map  100" />  
+    <node pkg="tf" type="static_transform_publisher" name="base_link_aerotrain_broadcaster" args="0 0 0 0 0 0 1 base_link aerotrain 100" />
+    <node pkg="tf" type="static_transform_publisher" name="odom_base_link_broadcaster" args="0 0 0 0 0 0 1 base_link odom  100" /> 
+    
+    <node type="rviz" name="rviz" pkg="rviz" />
+
+    <!-- start realsense cam-->
+    <include file="/root/catkin_ws/src/realsense2_description/launch/view_t265_model_copy.launch">
+    </include>
+    
+</launch>
+
+
+
