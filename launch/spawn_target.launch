@@ -11,7 +11,7 @@
     <arg name="enable_ground_truth" default="true"/>
     <arg name="log_file" default="mmuav_log"/>
     <arg name="exclude_floor_link_from_collision_check" default="ground_plane::link"/>
-    <arg name="model_crack" value="/root/PX4-Autopilot/Tools/sitl_gazebo/models/$(arg file_name)/$(arg file_name).urdf.gazebo" />
+    <arg name="model_crack" value="$(find px4)/Tools/sitl_gazebo/models/$(arg file_name)/$(arg file_name).urdf.gazebo" />
 
     <!-- send the robot XML to param server -->
     <param name="/$(arg file_name)/robot_description" command="
