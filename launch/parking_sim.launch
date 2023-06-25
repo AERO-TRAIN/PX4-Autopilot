@@ -7,10 +7,10 @@
     <arg name="gui" default="true"/>
     <arg name="debug" default="false"/>
     <arg name="verbose" default="true"/>
-    <arg name="model" default="/root/PX4-Autopilot/Tools/sitl_gazebo/models/parking/parking.urdf.gazebo"/> 
-    <arg name="sdf" default="/root/PX4-Autopilot/Tools/sitl_gazebo/models/aerotrain/aerotrain.sdf"/>
-    <arg name="world" default="/root/PX4-Autopilot/Tools/sitl_gazebo/worlds/well_lit.world"/>
-    <param name="robot_description" textfile="/root/PX4-Autopilot/Tools/sitl_gazebo/models/aerotrain/aerotrain.urdf" />
+    <arg name="model" default="$(find px4)/Tools/sitl_gazebo/models/parking/parking.urdf.gazebo"/> 
+    <arg name="sdf" default="$(find px4)/Tools/sitl_gazebo/models/aerotrain/aerotrain.sdf"/>
+    <arg name="world" default="$(find px4)/Tools/sitl_gazebo/worlds/well_lit.world"/>
+    <param name="robot_description" textfile="$(find px4)/Tools/sitl_gazebo/models/aerotrain/aerotrain.urdf" />
 
     <arg name="vehicle" default="aerotrain"/>
     <arg name="fcu_url" default="udp://:14540@localhost:14557"/>
